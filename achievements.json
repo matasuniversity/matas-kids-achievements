@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "trees": [
+    { "id": "matas:demo", "name": "Демо MATAS", "icon": "icons/maker.svg" }
+  ],
+  "nodes": [
+    {
+      "id": "matas:demo/start",
+      "treeId": "matas:demo",
+      "parentId": null,
+      "name": "Демо: старт мейкера",
+      "condition": "Демонстраційний вузол. Замініть цей текст на погоджену умову досягнення.",
+      "reward": "",
+      "skills": [],
+      "icon": "icons/maker.svg",
+      "x": 0,
+      "y": 1,
+      "frame": "task"
+    },
+    {
+      "id": "matas:demo/project",
+      "treeId": "matas:demo",
+      "parentId": "matas:demo/start",
+      "name": "Демо: власний проєкт",
+      "condition": "Демонстраційний вузол. Опишіть, який результат має показати дитина викладачу.",
+      "reward": "",
+      "skills": [],
+      "icon": "icons/project.svg",
+      "x": 1,
+      "y": 1,
+      "frame": "goal"
+    }
+  ]
+}
