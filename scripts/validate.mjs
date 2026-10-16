@@ -18,6 +18,7 @@ assert.equal(new Set(d.nodes.map((n) => n.id)).size, d.nodes.length);
 for (const t of d.trees) {
   assert.ok(id(t.id) && text(t.name));
   image(t.icon);
+  assert.ok(["stone","end","adventure","husbandry","nether","copper","blueprint"].includes(t.background));
 }
 const positions = new Set();
 for (const n of d.nodes) {
@@ -36,13 +37,18 @@ for (const n of d.nodes) {
   const pos = JSON.stringify([n.treeId, n.x, n.y]);
   assert.ok(!positions.has(pos));
   positions.add(pos);
-  const visited = new Set([n.id]);
-  let p = n;
-  while (p.parentId !== null) {
-    const parent = d.nodes.find((v) => v.id === p.parentId);
-    assert.ok(parent && parent.treeId === n.treeId && !visited.has(parent.id));
-    visited.add(parent.id);
-    p = parent;
+  if(n.parentId !== null) { const p = d.nodes.find(p=>p.id===n.parentId); assert.ok(p && p.treeId===n.treeId); }
+  const visiting = new Set(), visited = new Set();
+  function visit(node) {
+    assert.ok(!visiting.has(node.id), "Dependency cycle"); if(visited.has(node.id))return;
+    visiting.add(node.id);
+    const parents=node.prerequisites ?? (node.parentId ? [node.parentId] : []);
+    assert.ok(Array.isArray(parents) && new Set(parents).size===parents.length);
+    for(const key of parents) { const parent=d.nodes.find(p=>p.id===key);assert.ok(parent && parent.treeId===node.treeId);visit(parent); }
+    const cross=node.crossSectionPrerequisites ?? [];assert.ok(Array.isArray(cross) && new Set(cross).size===cross.length);
+    for(const key of cross) { const parent=d.nodes.find(p=>p.id===key);assert.ok(parent && parent.treeId!==node.treeId);visit(parent); }
+    visiting.delete(node.id);visited.add(node.id);
   }
+  visit(n);
 }
 console.log(`PASS: ${d.trees.length} trees, ${d.nodes.length} nodes`);
